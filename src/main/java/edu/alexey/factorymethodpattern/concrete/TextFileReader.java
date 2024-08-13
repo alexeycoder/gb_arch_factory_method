@@ -1,13 +1,15 @@
-package edu.alexey.factorymethodpattern;
+package edu.alexey.factorymethodpattern.concrete;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class TextFileReader implements Reader {
+import edu.alexey.factorymethodpattern.BaseReader;
+import edu.alexey.factorymethodpattern.DataEntry;
+
+public class TextFileReader extends BaseReader {
 
 	private Path path;
-	private int position;
 
 	@Override
 	public void setDataSource(Object filepathStr) {
@@ -15,31 +17,13 @@ public class TextFileReader implements Reader {
 		this.path = Path.of(filepathStr.toString());
 	}
 
-	/**
-	 * Zero-based!
-	 */
-	@Override
-	public void setPosition(int pos) {
-
-		if (pos < 0) {
-			throw new IllegalArgumentException();
-		}
-		this.position = pos;
-	}
-
-	/**
-	 * Zero-based!
-	 */
-	@Override
-	public int getPosition() {
-		return this.position;
-	}
-
 	@Override
 	public Iterable<TextEntry> readEntries() {
 
 		try {
-			return Files.lines(path).skip(position).map(line -> new TextEntry(line)).toList();
+
+			return Files.lines(path).skip(position).map(TextEntry::new).toList();
+
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
